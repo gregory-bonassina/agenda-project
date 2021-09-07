@@ -1,8 +1,13 @@
 const Login = require('../models/LoginModel');
 
 exports.index = (req, res) => {
-    if(req.session.user) return res.render('login-logado');
+    if(req.session.user) return res.redirect('/');
     return res.render('login');
+};
+
+exports.registration = (req, res) => {
+    if(req.session.user) return res.redirect('/');
+    return res.render('registration');
 };
 
 exports.register = async (req, res) => {
@@ -12,14 +17,14 @@ exports.register = async (req, res) => {
     
         if(login.errors.length > 0 ) {
             req.flash('errors', login.errors);
-            req.session.save(() => {
+            req.session.save(function() {
                 return res.redirect('back');
             });
             return;
         }
     
         req.flash('success', 'Seu usuário foi criado com sucesso.');
-        req.session.save(() => {
+        req.session.save(function()  {
             return res.redirect('back');
         });
     } catch (error) {
@@ -35,7 +40,7 @@ exports.login = async (req, res) => {
     
         if(login.errors.length > 0 ) {
             req.flash('errors', login.errors);
-            req.session.save(() => {
+            req.session.save(function() {
                 return res.redirect('back');
             });
             return;
@@ -43,7 +48,7 @@ exports.login = async (req, res) => {
     
         req.flash('success', 'Você entrou no sistema.');
         req.session.user = login.user;
-        req.session.save(() => {
+        req.session.save(function()  {
             return res.redirect('back');
         });
     } catch (error) {
@@ -54,5 +59,5 @@ exports.login = async (req, res) => {
 
 exports.logout = (req, res) => {
     req.session.destroy();
-    res.redirect('/');
+    res.redirect('/login/index');
 }

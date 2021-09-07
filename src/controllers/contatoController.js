@@ -8,7 +8,7 @@ exports.index = (req, res) => {
 
 exports.register = async (req, res) => {
     try {
-        const contato = new Contato(req.body);
+        const contato = new Contato(req.body, req.session.user);
         await contato.register();
         
         if(contato.errors.length > 0) {
@@ -38,7 +38,7 @@ exports.editIndex = async (req, res) => {
 exports.edit = async (req, res) => {
     try {
         if(!req.params.id) return res.render('404');
-        const contato = new Contato(req.body);
+        const contato = new Contato(req.body, req.session.user);
         await contato.edit(req.params.id);
     
         if(contato.errors.length > 0) {
@@ -48,7 +48,7 @@ exports.edit = async (req, res) => {
         }
     
         req.flash('success', 'Contato editado com sucesso.');
-        req.session.save(() => res.redirect(`/contato/index/${contato.contato._id}`));
+        req.session.save(() => res.redirect('/'));
         return;
     } catch (error) {
         console.log(error);
